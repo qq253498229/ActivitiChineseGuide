@@ -19,7 +19,8 @@
   - [2.1.一分钟版本](#2.1.一分钟版本)
   - [2.2.Activiti的安装](#2.2.Activiti的安装)
   - [2.3.Activiti数据库设置](#2.3.Activiti数据库设置)
-
+- [3.配置](#3.配置)
+  - [3.1.创建流程引擎](#3.1.创建流程引擎)
 
 
 ## 1.介绍
@@ -112,3 +113,7 @@ Activiti UI | [http://localhost:8080/activiti-app](http://localhost:8080/activit
 ### 2.4.导入Activiti jar及其依赖项
 
 ### 2.5.下一步
+
+## 3.配置
+
+### 3.1.创建流程引擎

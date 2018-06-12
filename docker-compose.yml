@@ -3,6 +3,12 @@ services:
   activiti:
     build: docker
     image: registry.cn-beijing.aliyuncs.com/wangdali/activiti:6
+    volumes:
+      - "./docker/conf/activiti:/usr/local/tomcat/webapps/activiti-app/WEB-INF/classes/META-INF/activiti-app"
+    ports:
+      - 8080:8080
+    environment:
+      TZ: Asia/Shanghai
   mysql:
     image: mysql:5.7.21
     environment:

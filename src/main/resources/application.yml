@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/activiti?autoReconnect=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/activiti6ui?autoReconnect=true&useSSL=false&createDatabaseIfNotExist=true
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: root

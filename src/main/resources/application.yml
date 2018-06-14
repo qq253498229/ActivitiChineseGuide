@@ -6,3 +6,4 @@ spring:
     password: root
 server:
   port: 8081
+  context-path: /api

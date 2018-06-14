@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {AppServiceService} from '../app-service.service';
 
 @Component({
   selector: 'app-task-list',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TaskListComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private service: AppServiceService
+  ) {
+  }
 
   ngOnInit() {
+    this.service.getTaskList().subscribe(res => {
+      console.log(res);
+    });
   }
 
 }

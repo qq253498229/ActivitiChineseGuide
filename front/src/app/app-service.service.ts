@@ -61,4 +61,8 @@ export class AppServiceService {
     this.setUserList(userList);
     localStorage.removeItem(this.CURRENT_USER);
   }
+
+  getTaskList(): Observable<any> {
+    return this.http.get('/api/task')
+  }
 }

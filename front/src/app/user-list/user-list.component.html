@@ -1,3 +1,20 @@
-<p>
-  user-list works!
-</p>
+<table *ngIf="userList.length > 0" border="1">
+  <thead>
+  <tr>
+    <th>用户名</th>
+    <th>密码</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let item of userList">
+    <td>{{item.username}}</td>
+    <td>{{item.password}}</td>
+    <td>
+      <a *ngIf="!user || user.username !== item.username" href="javascript:void(0);" (click)="change(item)"> 切换</a>
+      <a *ngIf="user && user.username === item.username" href="javascript:void(0);" (click)="logout(item)"> 注销</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<div *ngIf="userList.length === 0">请登录</div>

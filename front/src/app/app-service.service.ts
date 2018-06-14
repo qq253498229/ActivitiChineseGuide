@@ -54,4 +54,11 @@ export class AppServiceService {
     }
     this.setUserList(userList);
   }
+
+  logout(item: any) {
+    let userList = this.getUserList();
+    userList = _.filter(userList, res => res['username'] !== item['username']);
+    this.setUserList(userList);
+    localStorage.removeItem(this.CURRENT_USER);
+  }
 }

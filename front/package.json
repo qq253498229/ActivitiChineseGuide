@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.json --host 0.0.0.0 --disable-host-check",
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
@@ -21,8 +21,10 @@
     "@angular/platform-browser": "^5.2.0",
     "@angular/platform-browser-dynamic": "^5.2.0",
     "@angular/router": "^5.2.0",
+    "@types/underscore": "^1.8.8",
     "core-js": "^2.4.1",
     "rxjs": "^5.5.6",
+    "underscore": "^1.9.1",
     "zone.js": "^0.8.19"
   },
   "devDependencies": {

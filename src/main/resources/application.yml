@@ -4,6 +4,8 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: root
+  activiti:
+    deployment-name: activiti-test
 server:
   port: 8081
   context-path: /api

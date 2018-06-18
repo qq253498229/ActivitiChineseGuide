@@ -68,14 +68,27 @@ export class AppServiceService {
   }
 
   newTask(): Observable<any> {
-    return this.http.get('/api/task/new');
+    const user = this.getUser();
+    return this.http.get('/api/task/new/' + user['username']);
   }
 
   passTask(id: any) {
-    return this.http.get('/api/task/pass/' + id);
+    const user = this.getUser();
+    return this.http.get('/api/task/pass/' + user['username'] + '/' + id);
   }
 
   rejectTask(id: any) {
-    return this.http.get('/api/task/reject/' + id);
+    const user = this.getUser();
+    return this.http.get('/api/task/reject/' + user['username'] + '/' + id);
+  }
+
+  getUserGroup() {
+    const user = this.getUser();
+    return this.http.get('/api/user/' + user['username']);
+  }
+
+  reapplyTask(id: any) {
+    const user = this.getUser();
+    return this.http.get('/api/task/reapply/' + user['username'] + '/' + id);
   }
 }

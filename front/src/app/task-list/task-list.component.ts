@@ -8,6 +8,7 @@ import {AppServiceService} from '../app-service.service';
 })
 export class TaskListComponent implements OnInit {
   taskList: any[] = [];
+  groupId: string;
 
   constructor(
     private service: AppServiceService
@@ -15,6 +16,9 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.service.getUserGroup().subscribe(res => {
+      this.groupId = res[0]['groupId'];
+    });
     this.service.getTaskList().subscribe(res => {
       console.log(res);
       this.taskList = res;
@@ -37,6 +41,12 @@ export class TaskListComponent implements OnInit {
   reject(id) {
     console.log(id);
     this.service.rejectTask(id).subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  reapply(id) {
+    this.service.reapplyTask(id).subscribe(res => {
       console.log(res);
     });
   }

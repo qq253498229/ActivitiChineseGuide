@@ -22,6 +22,28 @@ public class ApplicationTest {
   @Resource
   private TaskService taskService;
 
+  @Test
+  public void start() {
+    // 开启请假流程
+    ProcessInstance process = runtimeService.startProcessInstanceByKey("LeaveProcess");
+    System.out.println(process.getId());
+    System.out.println(process.getName());
+
+    Task task = getTask(process);
+    System.out.println(task.getName());
+  }
+
+  @Test
+  public void startTask() {
+    Task task = taskService.createTaskQuery().processInstanceId("10001").singleResult();
+
+    System.out.println(task.getId());
+    System.out.println(task.getName());
+
+    taskService.claim(task.getId(),"worker1");
+    taskService.complete(task.getId());
+  }
+
   /**
    * 最简单的一套流程处理
    */

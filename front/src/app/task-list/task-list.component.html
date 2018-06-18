@@ -13,8 +13,13 @@
       <td>{{item?.processName}}</td>
       <td>{{item?.name}}</td>
       <td>
-        <a href="javascript:void(0);" (click)="pass(item.id)">通过</a>
-        <a href="javascript:void(0);" (click)="reject(item.id)">拒绝</a>
+        <ng-container *ngIf="groupId === 'leader'">
+          <a href="javascript:void(0);" (click)="pass(item.id)">通过</a>
+          <a href="javascript:void(0);" (click)="reject(item.id)">拒绝</a>
+        </ng-container>
+        <ng-container *ngIf="groupId === 'worker'">
+          <a href="javascript:void(0);" (click)="reapply(item.id)">重新申请</a>
+        </ng-container>
       </td>
     </tr>
     </tbody>

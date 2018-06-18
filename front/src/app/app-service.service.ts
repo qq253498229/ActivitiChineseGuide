@@ -63,6 +63,19 @@ export class AppServiceService {
   }
 
   getTaskList(): Observable<any> {
-    return this.http.get('/api/task')
+    const user = this.getUser();
+    return this.http.get('/api/task/list/' + user['username']);
+  }
+
+  newTask(): Observable<any> {
+    return this.http.get('/api/task/new');
+  }
+
+  passTask(id: any) {
+    return this.http.get('/api/task/pass/' + id);
+  }
+
+  rejectTask(id: any) {
+    return this.http.get('/api/task/reject/' + id);
   }
 }

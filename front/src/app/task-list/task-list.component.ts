@@ -7,6 +7,7 @@ import {AppServiceService} from '../app-service.service';
   styleUrls: ['./task-list.component.css']
 })
 export class TaskListComponent implements OnInit {
+  taskList: any[] = [];
 
   constructor(
     private service: AppServiceService
@@ -16,7 +17,27 @@ export class TaskListComponent implements OnInit {
   ngOnInit() {
     this.service.getTaskList().subscribe(res => {
       console.log(res);
+      this.taskList = res;
     });
   }
 
+  newTask() {
+    this.service.newTask().subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  pass(id) {
+    console.log(id);
+    this.service.passTask(id).subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  reject(id) {
+    console.log(id);
+    this.service.rejectTask(id).subscribe(res => {
+      console.log(res);
+    });
+  }
 }

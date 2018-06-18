@@ -1,3 +1,27 @@
-<p>
-  task-list works!
-</p>
+<div>
+  <a href="javascript:void(0);" (click)="newTask()">新建任务</a>
+  <table *ngIf="taskList.length !== 0" border="1">
+    <thead>
+    <tr>
+      <th>流程名</th>
+      <th>任务名</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of taskList">
+      <td>{{item?.processName}}</td>
+      <td>{{item?.name}}</td>
+      <td>
+        <a href="javascript:void(0);" (click)="pass(item.id)">通过</a>
+        <a href="javascript:void(0);" (click)="reject(item.id)">拒绝</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="taskList.length === 0">
+    暂时没有任务
+  </div>
+
+</div>

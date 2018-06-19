@@ -34,26 +34,46 @@ export class TaskListComponent implements OnInit {
 
   newTask() {
     this.service.newTask(this.day, this.message).subscribe(res => {
-      console.log(res);
+      if (res === true) {
+        this.newFlag = false;
+        this.ngOnInit();
+      } else {
+        alert('出错啦');
+      }
     });
   }
 
   pass(id) {
     this.service.passTask(id, this.message).subscribe(res => {
-      console.log(res);
+      if (res === true) {
+        this.passFlag = false;
+        this.ngOnInit();
+      } else {
+        alert('出错啦');
+      }
     });
   }
 
   reject(id) {
     console.log(id);
     this.service.rejectTask(id, this.message).subscribe(res => {
-      console.log(res);
+      if (res === true) {
+        this.rejectFlag = false;
+        this.ngOnInit();
+      } else {
+        alert('出错啦');
+      }
     });
   }
 
   reapply(id, day) {
     this.service.reapplyTask(id, day, this.message).subscribe(res => {
-      console.log(res);
+      if (res === true) {
+        this.reapplyFlag = false;
+        this.ngOnInit();
+      } else {
+        alert('出错啦');
+      }
     });
   }
 }

@@ -1,9 +1,6 @@
 package com.example;
 
 import org.activiti.engine.IdentityService;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +20,7 @@ public class Application {
   }
 
   @Bean
-  CommandLineRunner runner(IdentityService identityService) {
+  CommandLineRunner runner() {
     return args -> {
       saveUser("worker1");
       saveUser("worker2");

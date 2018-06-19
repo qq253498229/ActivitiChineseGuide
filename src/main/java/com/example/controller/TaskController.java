@@ -1,15 +1,11 @@
 package com.example.controller;
 
 import org.activiti.engine.*;
-import org.activiti.engine.history.HistoricActivityInstanceQuery;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -52,6 +48,8 @@ public class TaskController {
       map.put("name", task.getName());
       ProcessDefinition processDefinition = repositoryService.getProcessDefinition(task.getProcessDefinitionId());
       map.put("processName", processDefinition.getName());
+      Map<String, Object> variables = taskService.getVariables(task.getId());
+      map.put("variables", variables);
       result.add(map);
     }
     return ok(result);
@@ -60,8 +58,11 @@ public class TaskController {
   /**
    * 新建流程
    */
-  @GetMapping("/new/{userId}")
-  public ResponseEntity<Boolean> newTask(@PathVariable("userId") String userId) {
+  @PostMapping
+  public ResponseEntity<Boolean> newTask(@RequestBody Map<String, Object> param) {
+    String userId = (String) param.get("userId");
+    Integer day = (Integer) param.get("day");
+    String message = (String) param.get("message");
     System.out.println("new process");
     // 新建流程
     ProcessInstance process = runtimeService.startProcessInstanceByKey(key);
@@ -71,16 +72,61 @@ public class TaskController {
     System.out.println("taskId:" + task.getId());
     // 接受任务
     taskService.claim(task.getId(), userId);
+    Map<String, Object> taskVariables = new HashMap<>();
+    taskVariables.put("day", day);
+    taskVariables.put("createUser", userId);
+    taskVariables.put("message", message);
     // 完成任务
-    taskService.complete(task.getId());
+    taskService.complete(task.getId(), taskVariables);
+    return ok(true);
+  }
+
+  /**
+   * 重新申请
+   */
+  @PutMapping
+  public ResponseEntity reapplyTask(@RequestBody Map<String, Object> param) {
+    String taskId = (String) param.get("taskId");
+    String userId = (String) param.get("userId");
+    Integer day = (Integer) param.get("day");
+    String message = (String) param.get("message");
+    // 接受任务
+    taskService.claim(taskId, userId);
+    Map<String, Object> taskVariables = new HashMap<>();
+    taskVariables.put("day", day);
+    taskVariables.put("createUser", userId);
+    taskVariables.put("message", message);
+    // 完成任务
+    taskService.complete(taskId, taskVariables);
+    return ok(true);
+  }
+
+  /**
+   * 通过审批
+   */
+  @PostMapping("/pass")
+  public ResponseEntity<Boolean> passTask(@RequestBody Map<String, Object> param) {
+    String taskId = (String) param.get("taskId");
+    String userId = (String) param.get("userId");
+    String passMessage = (String) param.get("passMessage");
+    Map<String, Object> taskVariables = new HashMap<>();
+    taskVariables.put("approved", true);
+    taskVariables.put("passMessage", passMessage);
+    // 接受任务
+    taskService.claim(taskId, userId);
+    // 完成任务
+    taskService.complete(taskId, taskVariables);
     return ok(true);
   }
 
   /**
    * 拒绝审批
    */
-  @GetMapping("/reject/{userId}/{taskId}")
-  public ResponseEntity reject(@PathVariable("taskId") String taskId, @PathVariable("userId") String userId) {
+  @PostMapping("/reject")
+  public ResponseEntity rejectTask(@RequestBody Map<String, Object> param) {
+    String taskId = (String) param.get("taskId");
+    String userId = (String) param.get("userId");
+    String rejectMessage = (String) param.get("rejectMessage");
     System.out.println("reject");
     Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
     System.out.println("taskId:" + task.getId());
@@ -88,41 +134,14 @@ public class TaskController {
     // 接受任务
     taskService.claim(taskId, userId);
     Map<String, Object> taskVariables = new HashMap<>();
-    taskVariables.put("approved", "false");
-    HistoricActivityInstanceQuery query = historyService.createHistoricActivityInstanceQuery().processInstanceId(task.getProcessInstanceId());
-    long count = query.count();
-    String assignee = query.listPage(Math.toIntExact(count - 2), 1).get(0).getAssignee();
+    taskVariables.put("approved", false);
+    taskVariables.put("rejectMessage", rejectMessage);
+    String assignee = (String) taskService.getVariables(taskId).get("createUser");
     // 完成任务
     taskService.complete(taskId, taskVariables);
     Task task1 = taskService.createTaskQuery().processInstanceId(task.getProcessInstanceId()).singleResult();
     // 指定代理人
     taskService.addCandidateUser(task1.getId(), assignee);
-    return ok(true);
-  }
-
-  /**
-   * 通过审批
-   */
-  @GetMapping("/pass/{userId}/{taskId}")
-  public ResponseEntity<Boolean> pass(@PathVariable("taskId") String taskId, @PathVariable("userId") String userId) {
-    Map<String, Object> map = new HashMap<>();
-    map.put("approved", "true");
-    // 接受任务
-    taskService.claim(taskId, userId);
-    // 完成任务
-    taskService.complete(taskId, map);
-    return ok(true);
-  }
-
-  /**
-   * 重新申请
-   */
-  @GetMapping("/reapply/{userId}/{taskId}")
-  public ResponseEntity reapply(@PathVariable("userId") String userId, @PathVariable("taskId") String taskId) {
-    // 接受任务
-    taskService.claim(taskId, userId);
-    // 完成任务
-    taskService.complete(taskId);
     return ok(true);
   }
 

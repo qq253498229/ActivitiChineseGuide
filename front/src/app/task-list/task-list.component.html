@@ -1,10 +1,22 @@
 <div>
-  <a href="javascript:void(0);" (click)="newTask()">新建任务</a>
+  <a href="javascript:void(0);" (click)="message = '' ; newFlag = true" *ngIf="!newFlag">新建任务</a>
+  <ng-container *ngIf="newFlag">
+    请输入请假天数 <input type="number" [(ngModel)]="day" placeholder="请假天数"> <br>
+    请输入请假原因 <input type="text" [(ngModel)]="message" placeholder="请假原因"> <br>
+    <button (click)="newTask()">提交</button>
+    <button (click)="newFlag = false">取消</button>
+  </ng-container>
   <table *ngIf="taskList.length !== 0" border="1">
     <thead>
     <tr>
       <th>流程名</th>
       <th>任务名</th>
+      <th>提交人</th>
+      <th>请假天数</th>
+      <th>请假理由</th>
+      <ng-container *ngIf="groupId === 'worker'">
+        <th>驳回原因</th>
+      </ng-container>
       <th>操作</th>
     </tr>
     </thead>
@@ -12,13 +24,39 @@
     <tr *ngFor="let item of taskList">
       <td>{{item?.processName}}</td>
       <td>{{item?.name}}</td>
+      <td>{{item?.variables.createUser}}</td>
+      <td>{{item?.variables.day}}</td>
+      <td>{{item?.variables.message}}</td>
+      <ng-container *ngIf="groupId === 'worker'">
+        <td>{{item?.variables.rejectMessage}}</td>
+      </ng-container>
       <td>
-        <ng-container *ngIf="groupId === 'leader'">
-          <a href="javascript:void(0);" (click)="pass(item.id)">通过</a>
-          <a href="javascript:void(0);" (click)="reject(item.id)">拒绝</a>
+        <ng-container *ngIf="groupId !== 'worker'">
+          <ng-container *ngIf="passFlag || rejectFlag">
+            <input type="text" [(ngModel)]="message">
+            <ng-container *ngIf="passFlag">
+              <button (click)="pass(item.id)">确定</button>
+            </ng-container>
+            <ng-container *ngIf="rejectFlag">
+              <button (click)="reject(item.id)">确定</button>
+            </ng-container>
+            <button (click)="passFlag = false ; rejectFlag = false">取消</button>
+          </ng-container>
+          <ng-container *ngIf="!passFlag && !rejectFlag">
+            <a href="javascript:void(0);" (click)="passFlag = true">通过</a>
+            <a href="javascript:void(0);" (click)="rejectFlag = true">拒绝</a>
+          </ng-container>
         </ng-container>
         <ng-container *ngIf="groupId === 'worker'">
-          <a href="javascript:void(0);" (click)="reapply(item.id)">重新申请</a>
+          <ng-container *ngIf="reapplyFlag">
+            <input type="number" [(ngModel)]="item?.variables.day" placeholder="请假天数">
+            <input type="text" [(ngModel)]="message" placeholder="请假原因">
+            <button (click)="reapply(item.id,item?.variables.day)">确定</button>
+            <button (click)="reapplyFlag = false">取消</button>
+          </ng-container>
+          <ng-container *ngIf="!reapplyFlag">
+            <a href="javascript:void(0);" (click)="reapplyFlag = true">重新申请</a>
+          </ng-container>
         </ng-container>
       </td>
     </tr>

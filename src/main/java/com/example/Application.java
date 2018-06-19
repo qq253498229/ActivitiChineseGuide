@@ -1,19 +1,17 @@
 package com.example;
 
+import org.activiti.engine.IdentityService;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.task.Task;
+import org.activiti.engine.identity.Group;
+import org.activiti.engine.identity.User;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Bean;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author wangbin
@@ -24,50 +22,54 @@ public class Application {
     SpringApplication.run(Application.class, args);
   }
 
-  @RestController
-  class TestController {
-    @Resource
-    private RuntimeService runtimeService;
-
-    @Resource
-    private TaskService taskService;
-
-    @GetMapping("/list")
-    public List<Map> list() {
-      List<Task> tasks = taskService.createTaskQuery().list();
-      return tasks.stream().map(t -> {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", t.getId());
-        map.put("name", t.getName());
-        return map;
-      }).collect(Collectors.toList());
-    }
-
-    @GetMapping("/complete/{taskId}")
-    public boolean complete(@PathVariable("taskId") String taskId) {
-      taskService.complete(taskId);
-      return true;
-    }
-
-    @GetMapping("/create")
-    public boolean create() {
-      runtimeService.startProcessInstanceByKey("LeaveProcess");
-      return true;
-    }
-
-  }
-  /*@Bean
-  CommandLineRunner runner(
-          final RepositoryService repositoryService,
-          final RuntimeService runtimeService,
-          final TaskService taskService
-  ) {
+  @Bean
+  CommandLineRunner runner(IdentityService identityService) {
     return args -> {
-      System.out.println("Number of process definitions : "
-              + repositoryService.createProcessDefinitionQuery().count());
-      System.out.println("Number of tasks : " + taskService.createTaskQuery().count());
-      runtimeService.startProcessInstanceByKey("choosecourse");
-      System.out.println("Number of tasks after process start: " + taskService.createTaskQuery().count());
+      saveUser("worker1");
+      saveUser("worker2");
+      saveUser("leader1");
+      saveUser("leader2");
+      saveUser("manager2");
+      saveUser("manager2");
+
+      saveGroup("worker");
+      saveGroup("leader");
+      saveGroup("manager");
+
+      saveRelation("worker1", "worker");
+      saveRelation("worker2", "worker");
+      saveRelation("leader1", "leader");
+      saveRelation("leader2", "leader");
+      saveRelation("manager2", "manager");
+      saveRelation("manager2", "manager");
     };
-  }*/
+  }
+
+  private void saveRelation(String userId, String groupId) {
+    Group group = identityService.createGroupQuery().groupMember(userId).singleResult();
+    if (group == null) {
+      identityService.createMembership(userId, groupId);
+    }
+  }
+
+  @Resource
+  private IdentityService identityService;
+
+  private void saveUser(String userId) {
+    User worker1 = identityService.createUserQuery().userId(userId).singleResult();
+    if (worker1 == null) {
+      User user = identityService.newUser(userId);
+      user.setPassword(userId);
+      identityService.saveUser(user);
+    }
+  }
+
+  private void saveGroup(String groupId) {
+    Group group = identityService.createGroupQuery().groupId(groupId).singleResult();
+    if (group == null) {
+      group = identityService.newGroup(groupId);
+      group.setName(groupId);
+      identityService.saveGroup(group);
+    }
+  }
 }

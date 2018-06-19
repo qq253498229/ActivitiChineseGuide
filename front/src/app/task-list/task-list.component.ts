@@ -9,6 +9,13 @@ import {AppServiceService} from '../app-service.service';
 export class TaskListComponent implements OnInit {
   taskList: any[] = [];
   groupId: string;
+  newFlag = false;
+  passFlag = false;
+  rejectFlag = false;
+  reapplyFlag = false;
+  day = 0;
+  message: string;
+
 
   constructor(
     private service: AppServiceService
@@ -26,27 +33,26 @@ export class TaskListComponent implements OnInit {
   }
 
   newTask() {
-    this.service.newTask().subscribe(res => {
+    this.service.newTask(this.day, this.message).subscribe(res => {
       console.log(res);
     });
   }
 
   pass(id) {
-    console.log(id);
-    this.service.passTask(id).subscribe(res => {
+    this.service.passTask(id, this.message).subscribe(res => {
       console.log(res);
     });
   }
 
   reject(id) {
     console.log(id);
-    this.service.rejectTask(id).subscribe(res => {
+    this.service.rejectTask(id, this.message).subscribe(res => {
       console.log(res);
     });
   }
 
-  reapply(id) {
-    this.service.reapplyTask(id).subscribe(res => {
+  reapply(id, day) {
+    this.service.reapplyTask(id, day, this.message).subscribe(res => {
       console.log(res);
     });
   }

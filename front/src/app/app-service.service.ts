@@ -8,6 +8,7 @@ import * as _ from 'underscore';
 export class AppServiceService {
   CURRENT_USER = 'current_user';
   USER_LIST = 'user_list';
+  TASK_URL = '/api/task';
 
   constructor(
     private http: HttpClient
@@ -64,22 +65,49 @@ export class AppServiceService {
 
   getTaskList(): Observable<any> {
     const user = this.getUser();
-    return this.http.get('/api/task/list/' + user['username']);
+    return this.http.get(this.TASK_URL + '/list/' + user['username']);
   }
 
-  newTask(): Observable<any> {
+  newTask(day, message): Observable<any> {
     const user = this.getUser();
-    return this.http.get('/api/task/new/' + user['username']);
+    const param = {
+      userId: user['username'],
+      day: day,
+      message: message
+    };
+    return this.http.post(this.TASK_URL, param);
   }
 
-  passTask(id: any) {
+
+  reapplyTask(taskId, day, message) {
     const user = this.getUser();
-    return this.http.get('/api/task/pass/' + user['username'] + '/' + id);
+    const param = {
+      userId: user['username'],
+      taskId: taskId,
+      day: day,
+      message: message
+    };
+    return this.http.put(this.TASK_URL, param);
   }
 
-  rejectTask(id: any) {
+  passTask(id, message) {
     const user = this.getUser();
-    return this.http.get('/api/task/reject/' + user['username'] + '/' + id);
+    const param = {
+      userId: user['username'],
+      taskId: id,
+      passMessage: message
+    };
+    return this.http.post(this.TASK_URL + '/pass', param);
+  }
+
+  rejectTask(id, message) {
+    const user = this.getUser();
+    const param = {
+      userId: user['username'],
+      taskId: id,
+      rejectMessage: message
+    };
+    return this.http.post(this.TASK_URL + '/reject', param);
   }
 
   getUserGroup() {
@@ -87,8 +115,5 @@ export class AppServiceService {
     return this.http.get('/api/user/' + user['username']);
   }
 
-  reapplyTask(id: any) {
-    const user = this.getUser();
-    return this.http.get('/api/task/reapply/' + user['username'] + '/' + id);
-  }
+
 }

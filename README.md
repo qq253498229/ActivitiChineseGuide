@@ -21,7 +21,8 @@
   - [2.3.Activiti数据库设置](#2.3.Activiti数据库设置)
 - [3.配置](#3.配置)
   - [3.1.创建流程引擎](#3.1.创建流程引擎)
-
+- [9.表单](#9.表单)
+  - [9.1表单属性](#9.1表单属性)
 
 ## 1.介绍
 
@@ -117,3 +118,84 @@ Activiti UI | [http://localhost:8080/activiti-app](http://localhost:8080/activit
 ## 3.配置
 
 ### 3.1.创建流程引擎
+
+## 9.表单
+
+Activiti为您的业务流程的手动步骤添加表单提供了一种方便灵活的方式。 我们支持两种使用表单的策略：使用表单属性和外部表单呈现。
+
+### 9.1表单属性
+
+与业务流程相关的所有信息都包含在流程变量本身中，或者通过流程变量进行引用。 Activiti支持将复杂的Java对象作为流程变量（如Serializable对象，JPA实体或整个XML文档）存储为字符串。
+
+启动流程并完成用户任务是人们参与流程的地方。与人交流需要在某些UI技术中呈现表格。为了简化多种UI技术，流程定义可以包含将流程变量中的复杂Java类型对象转换为属性的Map <String，String>的逻辑。
+
+任何UI技术都可以使用暴露属性信息的Activiti API方法在这些属性之上构建表单。这些属性可以为流程变量提供一个专门的（和更有限的）视图。例如，FormData返回值中提供了显示表单所需的属性
+
+```
+StartFormData FormService.getStartFormData(String processDefinitionId)
+```
+
+或
+
+```
+TaskFormdata FormService.getTaskFormData(String taskId)
+```
+
+默认情况下，内置表单引擎会查看属性以及流程变量。 因此，如果任务表单属性与过程变量1-1匹配，则无需声明任务表单属性。 例如，使用以下声明：
+
+```
+<startEvent id="start" />
+```
+
+当执行到达startEvent时，所有进程变量都可用，但是
+
+```
+formService.getStartFormData(String processDefinitionId).getFormProperties()
+```
+
+将是空的，因为没有定义特定的映射。
+
+在上面的例子中，所有提交的属性将被存储为过程变量。这意味着只需在表单中添加一个新的输入字段，就可以存储一个新的变量。
+
+属性是从过程变量派生的，但它们不必存储为过程变量。例如，一个流程变量可以是Address类的JPA实体。并且UI技术使用的表单属性StreetName可以与表达式＃{address.street}
+
+类似地，用户应该在表单中提交的属性可以作为过程变量存储，也可以作为其中一个过程变量的嵌套属性存储为UEL值表达式，例如， ＃{街道地址} 。
+
+模拟提交的属性的默认行为是它们将被存储为流程变量，除非formProperty声明另外指定。
+
+也可以将类型转换作为表单属性和流程变量之间的处理的一部分应用。
+
+例如：
+
+```
+<userTask id="task">
+  <extensionElements>
+    <activiti:formProperty id="room" />
+    <activiti:formProperty id="duration" type="long"/>
+    <activiti:formProperty id="speaker" variable="SpeakerName" writable="false" />
+    <activiti:formProperty id="street" expression="#{address.street}" required="true" />
+  </extensionElements>
+</userTask>
+```
+
+- 表单属性空间将以字符串形式映射到流程变量空间
+
+- 表单属性持续时间将作为java.lang.Long映射到进程变量持续时间
+
+- 表单属性说话者将被映射到流程变量SpeakerName。 它只会在TaskFormData对象中可用。 如果属性发言者被提交，ActivitiException将被抛出。 模拟，属性可读=“假”，一个属性可以从FormData中排除，但仍然在提交中处理。
+
+- 表单属性街道将以字符串映射到过程变量地址中的Java bean属性街道。 如果没有提供该属性，required =“true”将在提交期间抛出异常。
+
+也可以将类型元数据作为从方法StartFormData FormService.getStartFormData（String processDefinitionId）和TaskFormdata FormService.getTaskFormData（String taskId）返回的FormData的一部分提供。
+
+我们支持以下表单属性类型：
+
+- 字符串（org.activiti.engine.impl.form.StringFormType
+
+- long（org.activiti.engine.impl.form.LongFormType）
+
+- 枚举（org.activiti.engine.impl.form.EnumFormType）
+
+- 日期（org.activiti.engine.impl.form.DateFormType）
+
+- 布尔（org.activiti.engine.impl.form.BooleanFormType）

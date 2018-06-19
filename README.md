@@ -10,7 +10,7 @@
   - [1.3.源码](#1.3.源码)
   - [1.4.软件需求](#1.4.软件需求)
   - [1.4.软件需求](#1.4.软件需求)
-    - [1.4.1.JDK 7+](#1.4.1.JDK 7+)
+    - [1.4.1.JDK7+](#1.4.1.JDK7+)
     - [1.4.2.IDE](#1.4.2.IDE)
   - [1.5.报告问题](#1.5.报告问题)
   - [1.6.实验性功能](#1.6.实验性功能)
@@ -39,7 +39,7 @@ Activiti使用了[Apache V2 协议](http://www.apache.org/licenses/LICENSE-2.0.h
 
 ### 1.4.软件需求
 
-#### 1.4.1.JDK 7+
+#### 1.4.1.JDK7+
 
 Activiti在高于或等于版本7的JDK上运行。
 转至[Oracle Java SE下载](http://www.oracle.com/technetwork/java/javase/downloads/index.html)并单击按钮“下载JDK”。 

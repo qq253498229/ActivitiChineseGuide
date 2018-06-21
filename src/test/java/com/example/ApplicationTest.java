@@ -1,7 +1,10 @@
 package com.example;
 
+import org.activiti.engine.FormService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.form.FormProperty;
+import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.test.Deployment;
@@ -21,6 +24,8 @@ public class ApplicationTest {
   private RuntimeService runtimeService;
   @Resource
   private TaskService taskService;
+  @Resource
+  private FormService formService;
 
   @Test
   public void start() {
@@ -40,8 +45,27 @@ public class ApplicationTest {
     System.out.println(task.getId());
     System.out.println(task.getName());
 
-    taskService.claim(task.getId(),"worker1");
+    taskService.claim(task.getId(), "worker1");
     taskService.complete(task.getId());
+  }
+
+  @Test
+  @Deployment
+  public void testForm() {
+    ProcessInstance process = runtimeService.startProcessInstanceByKey("LeaveProcess");
+    System.out.println("process start...");
+    System.out.println("process id:" + process.getId());
+    Task task = taskService.createTaskQuery().processInstanceId(process.getId()).singleResult();
+    System.out.println("task id:" + task.getId());
+    TaskFormData taskFormData = formService.getTaskFormData(task.getId());
+    for (FormProperty formProperty : taskFormData.getFormProperties()) {
+      String id = formProperty.getId();
+      String name = formProperty.getName();
+      String type = formProperty.getType().getName();
+      String value = formProperty.getValue();
+    }
+    Object renderedTaskForm = formService.getRenderedTaskForm(task.getId());
+    System.out.println(1);
   }
 
   /**

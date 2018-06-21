@@ -2,12 +2,12 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
   <process id="LeaveProcess" name="请假流程" isExecutable="true">
     <startEvent id="startEvent1" name="开始"></startEvent>
-    <userTask id="sid-C38B6CE2-6986-40EA-80FB-B49D7DEA17C2" name="申请假期"></userTask>
+    <userTask id="sid-C38B6CE2-6986-40EA-80FB-B49D7DEA17C2" name="申请假期" activiti:formKey="LeaveRequestForm"></userTask>
     <sequenceFlow id="sid-0576A83A-F46B-4F2A-881A-DCA948CD1B9C" sourceRef="startEvent1" targetRef="sid-C38B6CE2-6986-40EA-80FB-B49D7DEA17C2"></sequenceFlow>
     <exclusiveGateway id="sid-344C75E6-1893-4CCD-844D-E6A10FC045B8"></exclusiveGateway>
     <sequenceFlow id="sid-1129A3A3-EA52-4CFB-B706-176B12FE6AC4" sourceRef="sid-C38B6CE2-6986-40EA-80FB-B49D7DEA17C2" targetRef="sid-344C75E6-1893-4CCD-844D-E6A10FC045B8"></sequenceFlow>
-    <userTask id="sid-3F8C77EE-82AD-46B3-B46E-614D6AC0F3D2" name="负责人审批" activiti:candidateGroups="leader"></userTask>
-    <userTask id="sid-C2339996-2E35-4389-8E1F-2EB32AC99529" name="经理审批" activiti:candidateGroups="manager"></userTask>
+    <userTask id="sid-3F8C77EE-82AD-46B3-B46E-614D6AC0F3D2" name="负责人审批" activiti:candidateGroups="leader" activiti:formKey="LeaveApprovalForm"></userTask>
+    <userTask id="sid-C2339996-2E35-4389-8E1F-2EB32AC99529" name="经理审批" activiti:candidateGroups="manager" activiti:formKey="LeaveApprovalForm"></userTask>
     <endEvent id="sid-866C606C-58E1-44F5-B86E-0C3D5F813F89" name="结束"></endEvent>
     <sequenceFlow id="sid-05D87E8F-536B-4241-9E83-FB1319C95244" name="大于3天" sourceRef="sid-344C75E6-1893-4CCD-844D-E6A10FC045B8" targetRef="sid-C2339996-2E35-4389-8E1F-2EB32AC99529">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${day > 3}]]></conditionExpression>

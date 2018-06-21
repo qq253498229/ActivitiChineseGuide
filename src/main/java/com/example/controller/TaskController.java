@@ -1,14 +1,12 @@
 package com.example.controller;
 
 import org.activiti.engine.*;
-import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +28,14 @@ public class TaskController {
   private RuntimeService runtimeService;
   @Resource
   private IdentityService identityService;
-  @Resource
-  private RepositoryService repositoryService;
+
   @Resource
   private HistoryService historyService;
+
+  @Resource
+  private CustomService customService;
+  @Resource
+  private FormService formService;
 
   /**
    * 任务列表
@@ -41,19 +43,10 @@ public class TaskController {
   @GetMapping("/list/{userId}")
   public ResponseEntity<List<Map<String, Object>>> list(@PathVariable("userId") String userId) {
     List<Task> list = taskService.createTaskQuery().taskCandidateUser(userId).list();
-    List<Map<String, Object>> result = new ArrayList<>();
-    for (Task task : list) {
-      Map<String, Object> map = new HashMap<>();
-      map.put("id", task.getId());
-      map.put("name", task.getName());
-      ProcessDefinition processDefinition = repositoryService.getProcessDefinition(task.getProcessDefinitionId());
-      map.put("processName", processDefinition.getName());
-      Map<String, Object> variables = taskService.getVariables(task.getId());
-      map.put("variables", variables);
-      result.add(map);
-    }
+    List<Map<String, Object>> result = customService.getMaps(list);
     return ok(result);
   }
+
 
   /**
    * 新建流程

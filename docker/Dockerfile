@@ -7,7 +7,7 @@ ENV APP_PATH $CATALINA_HOME/webapps/activiti-app
 ENV ADMIN_PATH $CATALINA_HOME/webapps/activiti-admin
 ENV REST_PATH $CATALINA_HOME/webapps/activiti-rest
 
-COPY activiti-$ACTIVITI_VERSION.zip .
+RUN curl -SLO https://github.com/Activiti/Activiti/releases/download/activiti-$ACTIVITI_VERSION/activiti-$ACTIVITI_VERSION.zip
 RUN unzip activiti-$ACTIVITI_VERSION.zip \
   && mkdir -p $APP_PATH \
   && mkdir -p $ADMIN_PATH \

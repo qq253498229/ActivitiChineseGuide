@@ -21,6 +21,33 @@
   - [2.3.Activiti数据库设置](#2.3.Activiti数据库设置)
 - [3.配置](#3.配置)
   - [3.1.创建流程引擎](#3.1.创建流程引擎)
+  - [3.2.配置流程引擎](#3.2.配置流程引擎)
+  - [3.3.配置数据库](#3.3.配置数据库)
+  - [3.4.配置JNDI数据源](#3.4.配置JNDI数据源)
+  - [3.5.支持的数据库](#3.5.支持的数据库)
+  - [3.6.创建数据表](#3.6.创建数据表)
+  - [3.7.数据表名解释](#3.7.数据表名解释)
+  - [3.8.数据库更新](#3.8.数据库更新)
+  - [3.9.Job执行](#3.9.Job执行)
+  - [3.10.激活Job执行](#3.10.激活Job执行)
+  - [3.11.Mail服务器配置](#3.11.Mail服务器配置)
+  - [3.12.历史配置](#3.12.历史配置)
+  - [3.13.通过表达式和脚本配置](#3.13.通过表达式和脚本配置)
+  - [3.14.部署缓存配置](#3.14.部署缓存配置)
+  - [3.15.日志](#3.15.日志)
+  - [3.16.映射诊断上下文](#3.16.映射诊断上下文)
+  - [3.17.事件处理](#3.17.事件处理)
+- [4.Activiti API](#4.ActivitiAPI)
+  - [4.1.流程引擎API和服务](#4.1.流程引擎API和服务)
+  - [4.2.异常策略](#4.2.异常策略)
+  - [4.3.使用Activiti服务](#4.3.使用Activiti服务)
+  - [4.4.查询API](#4.4.查询API)
+  - [4.5.参数](#4.5.参数)
+  - [4.6.临时参数](#4.6.临时参数)
+  - [4.7.表达式](#4.7.表达式)
+  - [4.8.单元测试](#4.8.单元测试)
+  - [4.9.调试单元测试](#4.9.调试单元测试)
+  - [4.10.Web应用中的流程引擎](#4.10.Web应用中的流程引擎)
 - [9.表单](#9.表单)
   - [9.1表单属性](#9.1表单属性)
 
@@ -199,3 +226,60 @@ formService.getStartFormData(String processDefinitionId).getFormProperties()
 - 日期（org.activiti.engine.impl.form.DateFormType）
 
 - 布尔（org.activiti.engine.impl.form.BooleanFormType）
+
+对于声明的每个表单属性，下列FormProperty信息将通过
+**List<FormProperty> formService.getStartFormData(String processDefinitionId).getFormProperties()**
+和
+**List<FormProperty> formService.getTaskFormData(String taskId).getFormProperties()**
+提供
+
+```java
+public interface FormProperty {
+  /** the key used to submit the property in {@link FormService#submitStartFormData(String, java.util.Map)}
+   * or {@link FormService#submitTaskFormData(String, java.util.Map)} */
+  String getId();
+  /** the display label */
+  String getName();
+  /** one of the types defined in this interface like e.g. {@link #TYPE_STRING} */
+  FormType getType();
+  /** optional value that should be used to display in this property */
+  String getValue();
+  /** is this property read to be displayed in the form and made accessible with the methods
+   * {@link FormService#getStartFormData(String)} and {@link FormService#getTaskFormData(String)}. */
+  boolean isReadable();
+  /** is this property expected when a user submits the form? */
+  boolean isWritable();
+  /** is this property a required input field */
+  boolean isRequired();
+}
+```
+
+例如：
+
+```xml
+<startEvent id="start">
+  <extensionElements>
+    <activiti:formProperty id="speaker"
+      name="Speaker"
+      variable="SpeakerName"
+      type="string" />
+
+    <activiti:formProperty id="start"
+      type="date"
+      datePattern="dd-MMM-yyyy" />
+
+    <activiti:formProperty id="direction" type="enum">
+      <activiti:value id="left" name="Go Left" />
+      <activiti:value id="right" name="Go Right" />
+      <activiti:value id="up" name="Go Up" />
+      <activiti:value id="down" name="Go Down" />
+    </activiti:formProperty>
+
+  </extensionElements>
+</startEvent>
+```
+
+所有这些信息都可以通过API访问。 类型名称可以通过 **formProperty.getType().getName()** 获得。 
+而且即使日期模式可以通过 **formProperty.getType().getInformation("datePattern")** 获得，而枚举值可以通过 **formProperty.getType().getInformation("values")** 获得。
+
+Activiti浏览器支持表单属性，并将相应的窗体定义呈现表单。 以下XML片段

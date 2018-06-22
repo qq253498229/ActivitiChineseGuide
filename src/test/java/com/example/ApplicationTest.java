@@ -3,8 +3,6 @@ package com.example;
 import org.activiti.engine.FormService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.form.FormProperty;
-import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.test.Deployment;
@@ -26,6 +24,7 @@ public class ApplicationTest {
   private TaskService taskService;
   @Resource
   private FormService formService;
+
 
   @Test
   public void start() {
@@ -51,6 +50,15 @@ public class ApplicationTest {
 
   @Test
   @Deployment
+  public void testDetail() {
+    Task task = taskService.createTaskQuery().taskId("77566").singleResult();
+//    TaskFormData taskFormData = formService.getTaskFormData("77566");
+
+    System.out.println(1);
+  }
+
+ /* @Test
+  @Deployment
   public void testForm() {
     ProcessInstance process = runtimeService.startProcessInstanceByKey("LeaveProcess");
     System.out.println("process start...");
@@ -66,7 +74,7 @@ public class ApplicationTest {
     }
     Object renderedTaskForm = formService.getRenderedTaskForm(task.getId());
     System.out.println(1);
-  }
+  }*/
 
   /**
    * 最简单的一套流程处理

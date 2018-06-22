@@ -23,7 +23,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequestMapping("/test")
 public class TestController {
-  private static final String key = "formProcess";
+  private static final String key = "testProcess";
   @Resource
   private TaskService taskService;
   @Resource
